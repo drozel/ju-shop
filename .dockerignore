@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+.github
+
+# Documentation
+README.md
+AGENTS.md
+*.md
+
+# Development files
+.vscode
+.idea
+*.code-workspace
+
+# Frontend build artifacts (will be built in container)
+frontend/build
+frontend/node_modules
+frontend/.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.venv
+venv/
+env/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Uploads (runtime data)
+uploads/*
+
+# Docker
+Dockerfile
+docker-compose.yml
+compose.yml
+.dockerignore

@@ -127,3 +127,22 @@ jushop/
 - Material-UI 6.x
 - react-barcode-reader (HID scanner support)
 - Webpack 5 for bundling
+
+### CI/CD
+
+**GitHub Actions Workflow** (`.github/workflows/docker-build.yml`):
+- Automatically builds Docker image on push to main/master
+- Publishes to GitHub Container Registry (ghcr.io)
+- Uses Docker layer caching for faster builds
+- Tags images with branch names, SHA, and semantic versions
+- **Free Tier**: ✅ Available with 2,000 minutes/month for private repos, unlimited for public
+
+**Package Visibility**: By default, packages are private. To make them public:
+1. Go to repository → Packages
+2. Click on the package
+3. Package settings → Change visibility → Public
+
+**Using the published image**:
+```bash
+docker pull ghcr.io/OWNER/REPO:latest
+```
