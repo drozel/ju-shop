@@ -26,7 +26,7 @@ function Keyboard({ handleKeyPress, useRomanNumerals = false }) {
     { value: "7", label: useRomanNumerals ? ROMAN_NUMERAL_MAP[7] : "7", span: 1 },
     { value: "8", label: useRomanNumerals ? ROMAN_NUMERAL_MAP[8] : "8", span: 1 },
     { value: "9", label: useRomanNumerals ? ROMAN_NUMERAL_MAP[9] : "9", span: 1 },
-    { value: "C", label: "C", span: 1 },
+    { value: "R", label: "R", span: 1 },
     { value: "0", label: useRomanNumerals ? ROMAN_NUMERAL_MAP[0] : "0", span: 1 },
     { value: ",", label: ",", span: 1 },
     { value: "Enter", label: "Enter", span: 3 },
