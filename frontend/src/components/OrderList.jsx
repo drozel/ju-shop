@@ -2,6 +2,7 @@ import React from "react";
 import {
   Box,
   Typography,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -9,8 +10,9 @@ import {
   TableRow,
   TableContainer,
 } from "@mui/material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-function OrderList({ orders }) {
+function OrderList({ orders, onRemoveOrder }) {
   return (
     <Box
       sx={{
@@ -62,6 +64,7 @@ function OrderList({ orders }) {
               >
                 Price (€)
               </TableCell>
+              <TableCell align="right" sx={{ width: 56 }} aria-label="actions" />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -82,6 +85,16 @@ function OrderList({ orders }) {
                     style: "currency",
                     currency: "EUR",
                   }).format(order.price.toString())}
+                </TableCell>
+                <TableCell align="right" sx={{ pr: 0.5 }}>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    aria-label={`remove ${order.name}`}
+                    onClick={() => onRemoveOrder(index)}
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}

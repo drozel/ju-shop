@@ -48,6 +48,10 @@ function CashControl({ shopLogoUrl, addOrderCallback }) {
     setOrders((prevOrders) => [{ name, price }, ...prevOrders]);
   };
 
+  const removeOrder = (indexToRemove) => {
+    setOrders((prevOrders) => prevOrders.filter((_, index) => index !== indexToRemove));
+  };
+
   // Allow external components to add an order
   useEffect(() => {
     if (addOrderCallback) {
@@ -98,7 +102,7 @@ function CashControl({ shopLogoUrl, addOrderCallback }) {
         </Box>
 
         <Box sx={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
-          <OrderList orders={orders} />
+          <OrderList orders={orders} onRemoveOrder={removeOrder} />
         </Box>
       </Box>
 

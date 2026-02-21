@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Button, Link, Typography } from "@mui/material";
+import { Box, Button, IconButton, Link, Typography } from "@mui/material";
 import { faShop } from "@fortawesome/free-solid-svg-icons";
 
 import CameraDialog from "./components/CameraDialog";
@@ -11,6 +11,7 @@ function App() {
   const [photo, setPhoto] = useState(null); // Stores the photo to display
   const [isCameraOpen, setIsCameraOpen] = useState(false); // Controls camera visibility
   const [shopLogoUrl, setShopLogoUrl] = useState("/api/next-logo");
+  const [isFooterVisible, setIsFooterVisible] = useState(true);
 
   const addOrderRef = useRef(null);
 
@@ -48,12 +49,21 @@ function App() {
     if (savedConfig) {
       handleConfigChange(JSON.parse(savedConfig));
     }
+
+    const savedFooterVisibility = localStorage.getItem("footerVisible");
+    if (savedFooterVisibility !== null) {
+      setIsFooterVisible(savedFooterVisibility === "true");
+    }
   }, []);
 
   // Save configuration to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("appConfig", JSON.stringify(sidebarConfig));
   }, [sidebarConfig]);
+
+  useEffect(() => {
+    localStorage.setItem("footerVisible", String(isFooterVisible));
+  }, [isFooterVisible]);
 
   return (
     <Box
@@ -99,38 +109,49 @@ function App() {
         </Box>
       </Box>
 
-      <Box
-        component="footer"
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 1,
-          px: { xs: 2, sm: 3 },
-          py: 1.5,
-          borderTop: "1px solid #ddd",
-          backgroundColor: "#fafafa",
-        }}
-      >
-        <Typography variant="body2" color="text.secondary">
-          Copyright &copy; {new Date().getFullYear()}{" "}
-          <Link href="https://vit.sh" target="_blank" rel="noopener noreferrer" underline="hover">
-            vit.sh
-          </Link>
-        </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          component="a"
-          href="https://www.paypal.com/donate/?hosted_button_id=MLQB6EGLS4EJN"
-          target="_blank"
-          rel="noopener noreferrer"
+      {isFooterVisible && (
+        <Box
+          component="footer"
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 1,
+            px: { xs: 2, sm: 3 },
+            py: 1.5,
+            borderTop: "1px solid #ddd",
+            backgroundColor: "#fafafa",
+          }}
         >
-          Buy me a coffee
-        </Button>
-      </Box>
+          <Typography variant="body2" color="text.secondary">
+            Copyright &copy; {new Date().getFullYear()}{" "}
+            <Link href="https://vit.sh" target="_blank" rel="noopener noreferrer" underline="hover">
+              vit.sh
+            </Link>
+          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              component="a"
+              href="https://www.paypal.com/donate/?hosted_button_id=MLQB6EGLS4EJN"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Buy me a coffee
+            </Button>
+            <IconButton
+              size="small"
+              aria-label="Close footer"
+              onClick={() => setIsFooterVisible(false)}
+            >
+              X
+            </IconButton>
+          </Box>
+        </Box>
+      )}
 
       <CameraDialog
         isOpen={isCameraOpen}
