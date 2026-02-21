@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "webpack serve",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production && find public -mindepth 1 -maxdepth 1 ! -name 'index.html' -exec cp -R {} build/ \\;"
   },
   "eslintConfig": {
     "extends": [
