@@ -18,12 +18,56 @@ import ConfigSidebar from "./components/ConfigSidebar";
 import CashControl from "./components/CashControl";
 import Barcode from "./components/Barcode";
 
+const WELCOME_TEXT = {
+  en: {
+    title: "Welcome to Ju Shop",
+    intro: "Ju Shop is a playful cash desk app where kids can scan products, add items, and practice checkout.",
+    manualTitle: "Manual mode:",
+    manualDescription: "use the on-screen controls to add products and manage the order without a scanner.",
+    scannerTitle: "Scanner support:",
+    scannerDescription: "connect a standard USB HID barcode scanner and scan items directly into the cart.",
+    startButton: "Start",
+  },
+  de: {
+    title: "Willkommen bei Ju Shop",
+    intro: "Ju Shop ist eine spielerische Kassen-App, mit der Kinder Produkte scannen, Artikel hinzufügen und das Bezahlen üben können.",
+    manualTitle: "Manueller Modus:",
+    manualDescription: "nutze die Bedienelemente auf dem Bildschirm, um Produkte ohne Scanner hinzuzufügen und den Einkauf zu verwalten.",
+    scannerTitle: "Scanner-Unterstützung:",
+    scannerDescription: "schließe einen standardmäßigen USB-HID-Barcode-Scanner an und scanne Artikel direkt in den Warenkorb.",
+    startButton: "Starten",
+  },
+  ru: {
+    title: "Добро пожаловать в Ju Shop",
+    intro: "Ju Shop - это игровое приложение кассы, где дети могут сканировать товары, добавлять позиции и тренироваться оформлять покупки.",
+    manualTitle: "Ручной режим:",
+    manualDescription: "используйте элементы управления на экране, чтобы добавлять товары и управлять заказом без сканера.",
+    scannerTitle: "Поддержка сканера:",
+    scannerDescription: "подключите стандартный USB HID сканер штрихкодов и сканируйте товары прямо в корзину.",
+    startButton: "Начать",
+  },
+};
+
+const detectWelcomeLanguage = () => {
+  if (typeof navigator === "undefined") {
+    return "en";
+  }
+
+  const browserLanguage = (navigator.language || "en").toLowerCase();
+
+  if (browserLanguage.startsWith("de")) return "de";
+  if (browserLanguage.startsWith("ru")) return "ru";
+
+  return "en";
+};
+
 function App() {
   const [photo, setPhoto] = useState(null); // Stores the photo to display
   const [isCameraOpen, setIsCameraOpen] = useState(false); // Controls camera visibility
   const [shopLogoUrl, setShopLogoUrl] = useState("/api/next-logo");
   const [isFooterVisible, setIsFooterVisible] = useState(true);
   const [isWelcomeDialogOpen, setIsWelcomeDialogOpen] = useState(false);
+  const [welcomeLanguage] = useState(detectWelcomeLanguage);
 
   const addOrderRef = useRef(null);
 
@@ -86,6 +130,7 @@ function App() {
     localStorage.setItem("welcomeDialogSeen", "true");
     setIsWelcomeDialogOpen(false);
   };
+  const welcomeText = WELCOME_TEXT[welcomeLanguage] || WELCOME_TEXT.en;
 
   return (
     <Box
@@ -193,10 +238,10 @@ function App() {
       />
 
       <Dialog open={isWelcomeDialogOpen} onClose={handleCloseWelcomeDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>Welcome to Ju Shop</DialogTitle>
+        <DialogTitle>{welcomeText.title}</DialogTitle>
         <DialogContent>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Ju Shop is a playful cash desk app where kids can scan products, add items, and practice checkout.
+            {welcomeText.intro}
           </Typography>
           <Box sx={{ display: "grid", gap: 1.5 }}>
             <Box
@@ -226,7 +271,7 @@ function App() {
                 <FontAwesomeIcon icon={faKeyboard} />
               </Box>
               <Typography variant="body1">
-                <strong>Manual mode:</strong> use the on-screen controls to add products and manage the order without a scanner.
+                <strong>{welcomeText.manualTitle}</strong> {welcomeText.manualDescription}
               </Typography>
             </Box>
 
@@ -257,14 +302,14 @@ function App() {
                 <FontAwesomeIcon icon={faBarcode} />
               </Box>
               <Typography variant="body1">
-                <strong>Scanner support:</strong> connect a standard USB HID barcode scanner and scan items directly into the cart.
+                <strong>{welcomeText.scannerTitle}</strong> {welcomeText.scannerDescription}
               </Typography>
             </Box>
           </Box>
         </DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={handleCloseWelcomeDialog}>
-            Start
+            {welcomeText.startButton}
           </Button>
         </DialogActions>
       </Dialog>
