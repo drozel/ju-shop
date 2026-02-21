@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python main.py -f /jushop/frontend -b ${BASE_PATH:-/}
+exec python main.py -f /jushop/frontend -b ${BASE_PATH:-/}

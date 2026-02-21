@@ -2,16 +2,25 @@ ARG BASE_PATH
 
 FROM node:20 AS web_builder
 
-COPY frontend/package*.json frontend/webpack.config.js /frontend/
-COPY frontend/src /frontend/src
-COPY frontend/public /frontend/public
+WORKDIR /frontend
 
-RUN cd /frontend && npm ci && npm run build
+COPY frontend/package*.json ./
+RUN npm ci
+
+COPY frontend/webpack.config.js ./
+COPY frontend/src ./src
+COPY frontend/public ./public
+
+RUN npm run build
 
 
 FROM python:3.12.12-slim
 
 WORKDIR /jushop
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends tini \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY main.py /jushop
 COPY requirements.txt /jushop
@@ -30,4 +39,4 @@ ENV BASE_PATH=${BASE_PATH}
 
 EXPOSE 80
 
-ENTRYPOINT ["bash", "-c", "/jushop/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/jushop/entrypoint.sh"]

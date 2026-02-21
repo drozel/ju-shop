@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box } from "@mui/material";
+import { Box, Button, Link, Typography } from "@mui/material";
 import { faShop } from "@fortawesome/free-solid-svg-icons";
 
 import CameraDialog from "./components/CameraDialog";
@@ -59,34 +59,77 @@ function App() {
     <Box
       sx={{
         display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
+        flexDirection: "column",
         minHeight: "100dvh",
         width: "100%",
         backgroundColor: "#f4f4f4",
-        overflow: "hidden",
+        overflowX: "hidden",
       }}
     >
       <Box
         sx={{
-          width: { xs: "100%", sm: 84 },
-          flexShrink: 0,
-          backgroundColor: "#f0f0f0",
-          borderBottom: { xs: "1px solid #ddd", sm: "none" },
-          borderRight: { xs: "none", sm: "1px solid #ddd" },
+          display: "flex",
+          flex: 1,
+          minHeight: 0,
+          flexDirection: { xs: "column", sm: "row" },
+          overflow: "hidden",
         }}
       >
-        <ConfigSidebar
-          options={options}
-          onConfigChange={handleConfigChange}
-          onAction={handleAction}
-        />
+        <Box
+          sx={{
+            width: { xs: "100%", sm: 84 },
+            flexShrink: 0,
+            backgroundColor: "#f0f0f0",
+            borderBottom: { xs: "1px solid #ddd", sm: "none" },
+            borderRight: { xs: "none", sm: "1px solid #ddd" },
+          }}
+        >
+          <ConfigSidebar
+            options={options}
+            onConfigChange={handleConfigChange}
+            onAction={handleAction}
+          />
+        </Box>
+
+        <Box sx={{ flex: 1, minHeight: 0, minWidth: 0 }}>
+          <CashControl
+            addOrderCallback={(callback) => (addOrderRef.current = callback)}
+            shopLogoUrl={shopLogoUrl}
+          />
+        </Box>
       </Box>
 
-      <Box sx={{ flex: 1, minHeight: 0 }}>
-        <CashControl
-          addOrderCallback={(callback) => (addOrderRef.current = callback)}
-          shopLogoUrl={shopLogoUrl}
-        />
+      <Box
+        component="footer"
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 1,
+          px: { xs: 2, sm: 3 },
+          py: 1.5,
+          borderTop: "1px solid #ddd",
+          backgroundColor: "#fafafa",
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          Copyright &copy; {new Date().getFullYear()}{" "}
+          <Link href="https://vit.sh" target="_blank" rel="noopener noreferrer" underline="hover">
+            vit.sh
+          </Link>
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          component="a"
+          href="https://www.paypal.com/donate/?hosted_button_id=MLQB6EGLS4EJN"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Buy me a coffee
+        </Button>
       </Box>
 
       <CameraDialog
