@@ -1,0 +1,21 @@
+version: "3"
+
+vars:
+  IMAGE_NAME: ju-shop:local
+  CONTAINER_NAME: ju-shop
+  HOST_PORT: "8080"
+  CONTAINER_PORT: "80"
+
+tasks:
+  build:
+    desc: Build the Ju Shop Docker image
+    cmds:
+      - docker build -t {{.IMAGE_NAME}} .
+
+  run:
+    desc: Run Ju Shop in Docker and expose it on localhost:8080
+    deps:
+      - build
+    cmds:
+      - docker rm -f {{.CONTAINER_NAME}} >/dev/null 2>&1 || true
+      - docker run --name {{.CONTAINER_NAME}} -p {{.HOST_PORT}}:{{.CONTAINER_PORT}} {{.IMAGE_NAME}}

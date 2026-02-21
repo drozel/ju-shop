@@ -3,60 +3,58 @@ import { Box, IconButton } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function Sidebar({ options, onConfigChange, onAction }) {
-  // Initialize active states for toggles
   const [activeStates, setActiveStates] = useState(
     options
       .filter((option) => option.type === "toggle")
       .reduce((acc, option) => ({ ...acc, [option.name]: false }), {})
   );
 
-  // Handle toggles
   const toggleOption = (optionName) => {
     setActiveStates((prevState) => {
       const updatedState = { ...prevState, [optionName]: !prevState[optionName] };
-      onConfigChange(updatedState); // Notify parent of the updated config
+      onConfigChange(updatedState);
       return updatedState;
     });
   };
 
-  // Handle actions
   const handleAction = (actionName) => {
     if (onAction) {
-      onAction(actionName); // Call the parent-provided action callback
+      onAction(actionName);
     }
   };
 
   return (
     <Box
       sx={{
-        height: "95%", // Full viewport height
-        width: "100%", // Fixed width for sidebar
+        height: { xs: "auto", sm: "100%" },
+        width: "100%",
         backgroundColor: "#f0f0f0",
         display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between", // Space toggles and actions
-        padding: "5px",
-        paddingTop: "10px",
-        overflowY: "hidden", // Prevent sidebar from growing
+        flexDirection: { xs: "row", sm: "column" },
+        justifyContent: { xs: "flex-start", sm: "space-between" },
+        p: 1,
+        overflow: "hidden",
       }}
     >
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
+          flexDirection: { xs: "row", sm: "column" },
           alignItems: "center",
-          overflowY: "auto", // Allow toggles to scroll if they exceed height
-          flex: 1, // Take up available space
+          overflowX: { xs: "auto", sm: "hidden" },
+          overflowY: { xs: "hidden", sm: "auto" },
+          gap: 1,
+          flex: 1,
         }}
       >
-        {options.map(({ name, icon, type, gap }) => (
+        {options.map(({ name, icon, type }) => (
           <IconButton
             key={name}
-            onClick={() => type == "toggle" ? toggleOption(name) : handleAction(name)}
+            onClick={() => (type === "toggle" ? toggleOption(name) : handleAction(name))}
             sx={{
-              width: "60px", // Square button
-              height: "60px", // Square button
-              marginBottom: `${gap || 1}rem`,
+              width: { xs: 48, sm: 60 },
+              height: { xs: 48, sm: 60 },
+              flexShrink: 0,
               backgroundColor: activeStates[name] ? "primary.main" : "white",
               color: activeStates[name] ? "white" : "black",
               borderRadius: "8px",

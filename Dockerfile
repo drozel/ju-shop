@@ -1,12 +1,12 @@
 ARG BASE_PATH
 
-FROM node:25.5.0 AS web_builder
+FROM node:20 AS web_builder
 
 COPY frontend/package*.json frontend/webpack.config.js /frontend/
 COPY frontend/src /frontend/src
 COPY frontend/public /frontend/public
 
-RUN cd /frontend && npm install && npm run build
+RUN cd /frontend && npm ci && npm run build
 
 
 FROM python:3.12.12-slim
