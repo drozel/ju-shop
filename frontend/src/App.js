@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Button, IconButton, Link, Typography } from "@mui/material";
-import { faLanguage, faShop } from "@fortawesome/free-solid-svg-icons";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Link,
+  Typography,
+} from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBarcode, faKeyboard, faLanguage, faShop } from "@fortawesome/free-solid-svg-icons";
 
 import CameraDialog from "./components/CameraDialog";
 import ConfigSidebar from "./components/ConfigSidebar";
@@ -12,6 +23,7 @@ function App() {
   const [isCameraOpen, setIsCameraOpen] = useState(false); // Controls camera visibility
   const [shopLogoUrl, setShopLogoUrl] = useState("/api/next-logo");
   const [isFooterVisible, setIsFooterVisible] = useState(true);
+  const [isWelcomeDialogOpen, setIsWelcomeDialogOpen] = useState(false);
 
   const addOrderRef = useRef(null);
 
@@ -54,6 +66,11 @@ function App() {
     if (savedFooterVisibility !== null) {
       setIsFooterVisible(savedFooterVisibility === "true");
     }
+
+    const hasSeenWelcomeDialog = localStorage.getItem("welcomeDialogSeen");
+    if (!hasSeenWelcomeDialog) {
+      setIsWelcomeDialogOpen(true);
+    }
   }, []);
 
   // Save configuration to localStorage whenever it changes
@@ -64,6 +81,11 @@ function App() {
   useEffect(() => {
     localStorage.setItem("footerVisible", String(isFooterVisible));
   }, [isFooterVisible]);
+
+  const handleCloseWelcomeDialog = () => {
+    localStorage.setItem("welcomeDialogSeen", "true");
+    setIsWelcomeDialogOpen(false);
+  };
 
   return (
     <Box
@@ -169,6 +191,83 @@ function App() {
           }
         }}
       />
+
+      <Dialog open={isWelcomeDialogOpen} onClose={handleCloseWelcomeDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>Welcome to Ju Shop</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Ju Shop is a playful cash desk app where kids can scan products, add items, and practice checkout.
+          </Typography>
+          <Box sx={{ display: "grid", gap: 1.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                p: 1.5,
+                border: "1px solid #d9d9d9",
+                borderRadius: 2,
+                backgroundColor: "#fafafa",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#e3f2fd",
+                  color: "#1565c0",
+                  flexShrink: 0,
+                }}
+              >
+                <FontAwesomeIcon icon={faKeyboard} />
+              </Box>
+              <Typography variant="body1">
+                <strong>Manual mode:</strong> use the on-screen controls to add products and manage the order without a scanner.
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                p: 1.5,
+                border: "1px solid #d9d9d9",
+                borderRadius: 2,
+                backgroundColor: "#fafafa",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#e8f5e9",
+                  color: "#2e7d32",
+                  flexShrink: 0,
+                }}
+              >
+                <FontAwesomeIcon icon={faBarcode} />
+              </Box>
+              <Typography variant="body1">
+                <strong>Scanner support:</strong> connect a standard USB HID barcode scanner and scan items directly into the cart.
+              </Typography>
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={handleCloseWelcomeDialog}>
+            Start
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

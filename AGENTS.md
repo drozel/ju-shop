@@ -91,6 +91,10 @@ jushop/
 
 ### Common Tasks
 
+**Building the project:**
+- Use `task build` from the repository root.
+- Do not use `npm run build` directly.
+
 **Adding a new API endpoint:**
 - Add route in `init_app()` function in `main.py`
 - Ensure it respects `base_path` parameter
