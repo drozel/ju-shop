@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import Keyboard from "./Keyboard";
 import OrderList from "./OrderList";
 
-function CashControl({ shopLogoUrl, addOrderCallback }) {
+function CashControl({ shopLogoUrl, addOrderCallback, useRomanNumerals = false }) {
   class NumberInput {
     constructor() {
       this.first = "0";
@@ -151,6 +151,7 @@ function CashControl({ shopLogoUrl, addOrderCallback }) {
           }}
         >
           <Keyboard
+            useRomanNumerals={useRomanNumerals}
             handleKeyPress={(key) => {
               if (key === "C") {
                 setEnteredNumber(new NumberInput());

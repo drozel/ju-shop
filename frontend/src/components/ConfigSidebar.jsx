@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-function Sidebar({ options, onConfigChange, onAction }) {
+function Sidebar({ options, activeStates: externalActiveStates = {}, onConfigChange, onAction }) {
   const [activeStates, setActiveStates] = useState(
     options
       .filter((option) => option.type === "toggle")
       .reduce((acc, option) => ({ ...acc, [option.name]: false }), {})
   );
+
+  useEffect(() => {
+    setActiveStates((prevState) => ({ ...prevState, ...externalActiveStates }));
+  }, [externalActiveStates]);
 
   const toggleOption = (optionName) => {
     setActiveStates((prevState) => {

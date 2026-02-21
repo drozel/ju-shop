@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Button, IconButton, Link, Typography } from "@mui/material";
-import { faShop } from "@fortawesome/free-solid-svg-icons";
+import { faLanguage, faShop } from "@fortawesome/free-solid-svg-icons";
 
 import CameraDialog from "./components/CameraDialog";
 import ConfigSidebar from "./components/ConfigSidebar";
@@ -16,8 +16,7 @@ function App() {
   const addOrderRef = useRef(null);
 
   const [sidebarConfig, setSidebarConfig] = useState({
-    Camera: false,
-    Keyboard: false,
+    RomanNumerals: false,
   });
 
   const handleAction = (action) => {
@@ -34,11 +33,12 @@ function App() {
   };
 
   const handleConfigChange = (config) => {
-    setSidebarConfig(config);
+    setSidebarConfig((prevConfig) => ({ ...prevConfig, ...config }));
   };
 
   const options = [
     { name: "Logo", icon: faShop, type: "action", gap: 20 },
+    { name: "RomanNumerals", icon: faLanguage, type: "toggle" },
   ];
 
   // Load initial logo and configuration from localStorage when the app starts
@@ -47,7 +47,7 @@ function App() {
 
     const savedConfig = localStorage.getItem("appConfig");
     if (savedConfig) {
-      handleConfigChange(JSON.parse(savedConfig));
+      setSidebarConfig((prevConfig) => ({ ...prevConfig, ...JSON.parse(savedConfig) }));
     }
 
     const savedFooterVisibility = localStorage.getItem("footerVisible");
@@ -96,6 +96,7 @@ function App() {
         >
           <ConfigSidebar
             options={options}
+            activeStates={sidebarConfig}
             onConfigChange={handleConfigChange}
             onAction={handleAction}
           />
@@ -105,6 +106,7 @@ function App() {
           <CashControl
             addOrderCallback={(callback) => (addOrderRef.current = callback)}
             shopLogoUrl={shopLogoUrl}
+            useRomanNumerals={sidebarConfig.RomanNumerals}
           />
         </Box>
       </Box>
