@@ -1,9 +1,11 @@
-from flask import Flask, send_from_directory, request, jsonify
+from flask import Flask, send_from_directory, request, jsonify, Response
 import os
 import random
 import argparse
 import logging
 from threading import Lock
+from urllib import request as urlrequest
+from urllib.error import URLError, HTTPError
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -58,7 +60,33 @@ class LogoRotator:
         """Check if any logos are available."""
         return len(self._logo_files) > 0
 
+
+def _get_env_bool(name, default=False):
+    """Parse common boolean env values."""
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _normalize_host(host):
+    return host.rstrip("/")
+
+
+def _normalize_base_path(base_path):
+    """Normalize base path so root is empty string and subpaths look like '/shop'."""
+    value = (base_path or "").strip()
+    if not value or value == "/":
+        return ""
+    value = value.rstrip("/")
+    if not value.startswith("/"):
+        value = f"/{value}"
+    return value
+
+
 def init_app(static_folder, base_path=""):
+    base_path = _normalize_base_path(base_path)
+
     # Set a simple static URL path for Flask
     app = Flask(__name__, static_folder=static_folder, static_url_path="/static")
     
@@ -94,6 +122,76 @@ def init_app(static_folder, base_path=""):
             return send_from_directory(UPLOAD_FOLDER, random_file)
         return jsonify({"error": "No photos available!"}), 404
 
+    @app.route(f"{base_path}/api/runtime-config", methods=['GET'])
+    def runtime_config():
+        analytics_enabled = _get_env_bool("ANALYTICS_ENABLED", default=False)
+        proxy_base = f"{base_path}/api/u" if base_path else "/api/u"
+
+        return jsonify({
+            "analytics": {
+                "enabled": analytics_enabled,
+                "host": os.getenv("ANALYTICS_HOST", "").strip(),
+                "siteId": os.getenv("ANALYTICS_SITE_ID", "").strip(),
+                "proxyEnabled": _get_env_bool("ANALYTICS_PROXY_ENABLED", default=True),
+                "proxyBase": proxy_base,
+            }
+        })
+
+    @app.route(f"{base_path}/api/analytics/script.js", methods=['GET'])
+    @app.route(f"{base_path}/api/u/script.js", methods=['GET'])
+    def analytics_script_proxy():
+        host = _normalize_host(os.getenv("ANALYTICS_HOST", "").strip())
+        if not host:
+            return jsonify({"error": "ANALYTICS_HOST is not configured"}), 404
+
+        try:
+            upstream_url = f"{host}/script.js"
+            req = urlrequest.Request(upstream_url, headers={"User-Agent": "ju-shop/analytics-proxy"})
+            with urlrequest.urlopen(req, timeout=10) as upstream:
+                body = upstream.read()
+                content_type = upstream.headers.get("Content-Type", "application/javascript")
+                cache_control = upstream.headers.get("Cache-Control")
+                response = Response(body, status=upstream.status, content_type=content_type)
+                if cache_control:
+                    response.headers["Cache-Control"] = cache_control
+                return response
+        except HTTPError as error:
+            return jsonify({"error": "Failed to fetch analytics script", "status": error.code}), 502
+        except URLError:
+            return jsonify({"error": "Unable to reach analytics host"}), 502
+
+    @app.route(f"{base_path}/api/analytics/api/send", methods=['POST'])
+    @app.route(f"{base_path}/api/u/api/send", methods=['POST'])
+    def analytics_send_proxy():
+        host = _normalize_host(os.getenv("ANALYTICS_HOST", "").strip())
+        if not host:
+            return jsonify({"error": "ANALYTICS_HOST is not configured"}), 404
+
+        try:
+            upstream_url = f"{host}/api/send"
+            headers = {
+                "Content-Type": request.headers.get("Content-Type", "application/json"),
+                "User-Agent": "ju-shop/analytics-proxy",
+            }
+            x_umami_cache = request.headers.get("x-umami-cache")
+            if x_umami_cache:
+                headers["x-umami-cache"] = x_umami_cache
+
+            req = urlrequest.Request(
+                upstream_url,
+                data=request.get_data(cache=True),
+                headers=headers,
+                method="POST",
+            )
+
+            with urlrequest.urlopen(req, timeout=10) as upstream:
+                body = upstream.read()
+                content_type = upstream.headers.get("Content-Type", "application/json")
+                return Response(body, status=upstream.status, content_type=content_type)
+        except HTTPError as error:
+            return jsonify({"error": "Analytics upstream rejected payload", "status": error.code}), 502
+        except URLError:
+            return jsonify({"error": "Unable to reach analytics host"}), 502
 
     # Serve React frontend
     @app.route(f"{base_path}/<path:path>")
@@ -118,9 +216,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Normalize base path
-    base_path = args.base_path.rstrip("/")  # Remove trailing slash if present
-    if not base_path.startswith("/"):
-        base_path = f"/{base_path}"  # Ensure the base path starts with a "/"
+    base_path = _normalize_base_path(args.base_path)
 
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)

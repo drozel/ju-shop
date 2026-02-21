@@ -55,6 +55,30 @@ The app will be available at `http://localhost:8087`
 - **Add Logos**: Place image files (PNG, JPG, etc.) in `frontend/static/logos/`
 - **Port**: Change the port mapping in `compose.yml` (default: 8087)
 - **Base Path**: Set `BASE_PATH` environment variable for subpath deployment
+- **Pageview Analytics (optional)**: Set runtime env vars below to enable Umami pageview tracking
+
+### Optional Pageview Analytics
+
+Analytics is disabled by default. When enabled, Ju Shop only loads the Umami script and tracks page visits (no in-app action tracking).
+
+Environment variables:
+
+- `ANALYTICS_ENABLED`: `true` or `false` (default: `false`)
+- `ANALYTICS_HOST`: Umami host, e.g. `https://analytics.example.com`
+- `ANALYTICS_SITE_ID`: Umami website ID UUID (from Umami tracking code)
+- `ANALYTICS_PROXY_ENABLED`: `true` or `false` (default: `true`). When enabled, Ju Shop serves Umami through first-party proxy routes (`/api/u/*`, plus legacy `/api/analytics/*`) to reduce ad-blocker/cross-origin issues.
+
+`docker-compose` example (Umami):
+
+```yaml
+services:
+  ju-shop:
+    environment:
+      ANALYTICS_ENABLED: "true"
+      ANALYTICS_HOST: https://analytics.example.com
+      ANALYTICS_SITE_ID: 00000000-0000-0000-0000-000000000000
+      ANALYTICS_PROXY_ENABLED: "true"
+```
 
 ## Requirements
 

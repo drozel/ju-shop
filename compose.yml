@@ -5,8 +5,12 @@ services:
     build:
       context: .
     container_name: ju-shop
-    #environment:
-    #  BASE_PATH: /shop
+    # environment:
+    #   BASE_PATH: /shop
+    #   ANALYTICS_ENABLED: "true"
+    #   ANALYTICS_HOST: https://analytics.example.com
+    #   ANALYTICS_SITE_ID: 00000000-0000-0000-0000-000000000000
+    #   ANALYTICS_PROXY_ENABLED: "true"
     # labels:
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.shop.rule=PathPrefix(`/shop`)"
