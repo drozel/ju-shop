@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Zauberladen">
+  <circle cx="256" cy="256" r="240" fill="#4A148C"/>
+  <circle cx="256" cy="256" r="216" fill="#7B1FA2"/>
+  <g fill="#FFFFFF">
+    <polygon points="256,110 274,196 360,196 290,246 314,330 256,278 198,330 222,246 152,196 238,196"/>
+  </g>
+  <g fill="#FFD54F">
+    <circle cx="160" cy="150" r="6"/>
+    <circle cx="380" cy="170" r="5"/>
+    <circle cx="370" cy="350" r="7"/>
+    <circle cx="140" cy="360" r="5"/>
+    <circle cx="410" cy="260" r="4"/>
+    <circle cx="110" cy="250" r="4"/>
+  </g>
+  <text x="256" y="430" font-family="Georgia, 'Times New Roman', serif" font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">Zauberladen</text>
+</svg>
